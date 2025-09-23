@@ -1,0 +1,173 @@
+/* Homify Theme Colors */
+:root {
+  --homify-primary: #3075BF;
+  --homify-orange: #FFA200;
+  --homify-blue-medium: #3075BF;
+  --homify-blue-primary: #007BFF;
+  --homify-brown-gold: #AB8138;
+  --homify-blue-dark: #405F80;
+  --homify-brown-dark: #544A38;
+}
+
+/* Custom utility classes for Homify theme */
+.text-homify-primary {
+  color: var(--homify-primary);
+}
+
+.bg-homify-primary {
+  background-color: var(--homify-primary);
+}
+
+.border-homify-primary {
+  border-color: var(--homify-primary);
+}
+
+.hover\:text-homify-primary:hover {
+  color: var(--homify-primary);
+}
+
+.hover\:bg-homify-primary:hover {
+  background-color: var(--homify-primary);
+}
+
+.text-homify-orange {
+  color: var(--homify-orange);
+}
+
+.bg-homify-orange {
+  background-color: var(--homify-orange);
+}
+
+.border-homify-orange {
+  border-color: var(--homify-orange);
+}
+
+.hover\:text-homify-orange:hover {
+  color: var(--homify-orange);
+}
+
+.hover\:bg-homify-orange:hover {
+  background-color: var(--homify-orange);
+}
+
+.text-homify-blue-dark {
+  color: var(--homify-blue-dark);
+}
+
+.bg-homify-blue-dark {
+  background-color: var(--homify-blue-dark);
+}
+
+.bg-homify-blue-primary {
+  background-color: var(--homify-blue-primary);
+}
+
+.hover\:bg-homify-blue-medium:hover {
+  background-color: var(--homify-blue-medium);
+}
+
+.bg-homify-brown-dark {
+  background-color: var(--homify-brown-dark);
+}
+
+.border-homify-brown-gold {
+  border-color: var(--homify-brown-gold);
+}
+
+.hover\:bg-homify-brown-gold:hover {
+  background-color: var(--homify-brown-gold);
+}
+
+/* Focus states with Homify colors */
+.focus\:ring-homify-primary:focus {
+  --tw-ring-color: var(--homify-primary);
+}
+
+.focus\:border-homify-primary:focus {
+  border-color: var(--homify-primary);
+}
+
+.focus\:ring-homify-orange:focus {
+  --tw-ring-color: var(--homify-orange);
+}
+
+.focus\:border-homify-orange:focus {
+  border-color: var(--homify-orange);
+}
+
+/* Transitions for smooth color changes */
+.transition-homify {
+  transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+/* Categories Grid Styles */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .categories-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .categories-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+.category-card {
+  position: relative;
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  border: 1px solid #f3f4f6;
+}
+
+.category-card:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  border-color: var(--homify-primary);
+}
+
+.category-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--homify-primary), var(--homify-blue-primary));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.category-card:hover::before {
+  opacity: 0.1;
+}
+
+.category-content {
+  position: relative;
+  z-index: 2;
+}
+
+.category-icon {
+  width: 3rem;
+  height: 3rem;
+  color: white;
+}
+
+.category-title {
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-align: center;
+  line-height: 1.2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
