@@ -1,0 +1,114 @@
+version: '3.8'
+
+services:
+  # Laravel Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: homify-app
+    ports:
+      - "8000:80"
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_URL=http://localhost:8000
+      - APP_TIMEZONE=Africa/Casablanca
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=homify
+      - DB_USERNAME=homify_user
+      - DB_PASSWORD=homify_password
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - ./storage:/var/www/html/storage
+      - ./bootstrap/cache:/var/www/html/bootstrap/cache
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - homify-network
+
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: homify-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: homify
+      MYSQL_USER: homify_user
+      MYSQL_PASSWORD: homify_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/migrations:/docker-entrypoint-initdb.d/migrations
+    networks:
+      - homify-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: homify-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - homify-network
+
+  # Mailpit (Email testing)
+  mailpit:
+    image: axllent/mailpit
+    container_name: homify-mailpit
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - homify-network
+
+  # Development with hot reload
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: homify-dev
+    ports:
+      - "3000:3000"  # Vite dev server
+      - "8001:80"    # Apache
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_URL=http://localhost:8001
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=homify
+      - DB_USERNAME=homify_user
+      - DB_PASSWORD=homify_password
+      - MAIL_MAILER=smtp
+      - MAIL_HOST=mailpit
+      - MAIL_PORT=1025
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
+      - /var/www/html/node_modules
+    depends_on:
+      - mysql
+      - redis
+      - mailpit
+    networks:
+      - homify-network
+
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  homify-network:
+    driver: bridge

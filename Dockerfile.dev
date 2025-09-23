@@ -1,0 +1,45 @@
+# Development Dockerfile with hot reload
+FROM php:8.2-apache
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git unzip libzip-dev libicu-dev libpng-dev libonig-dev libxml2-dev \
+    curl nodejs npm \
+ && docker-php-ext-install pdo_mysql zip intl gd \
+ && a2enmod rewrite headers \
+ && rm -rf /var/lib/apt/lists/*
+
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Set Apache docroot to /public
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/000-default.conf \
+ && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
+
+WORKDIR /var/www/html
+
+# Copy composer files and install dependencies
+COPY composer.json composer.lock ./
+RUN composer install --no-scripts --no-autoloader
+
+# Copy package files and install Node dependencies
+COPY package.json package-lock.json ./
+RUN npm install
+
+# Copy application code
+COPY . .
+
+# Complete Composer setup
+RUN composer dump-autoload --optimize
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Development entrypoint
+COPY docker/entrypoint.dev.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 80 3000
+CMD ["/entrypoint.sh"]

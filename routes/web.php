@@ -22,6 +22,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/healthz', fn() => response()->json(['ok' => true]));
+
+
 // Catalog Routes (Public)
 Route::get('/', [CatalogController::class, 'home'])->name('catalog.home');
 Route::get('/c/{slug}', [CatalogController::class, 'category'])->name('catalog.category');
