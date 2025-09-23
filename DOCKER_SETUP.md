@@ -183,28 +183,40 @@ docker stats
 
 ### Common Issues
 
-1. **Permission Errors**
+1. **Composer Install Errors**
+   ```
+   Could not open input file: artisan
+   ```
+   **Solution**: The Dockerfile has been fixed to copy necessary Laravel files before running composer install. Use the updated Dockerfile.
+
+2. **Permission Errors**
    ```bash
    sudo chown -R $USER:$USER storage bootstrap/cache
    ```
 
-2. **Database Connection Issues**
+3. **Database Connection Issues**
    ```bash
    # Check if MySQL is ready
    docker-compose exec mysql mysql -u homify_user -p homify
    ```
 
-3. **Asset Build Issues**
+4. **Asset Build Issues**
    ```bash
    # Rebuild assets
    docker-compose exec dev npm run build
    ```
 
-4. **Cache Issues**
+5. **Cache Issues**
    ```bash
    # Clear all caches
    docker-compose exec app php artisan optimize:clear
    ```
+
+6. **PHP Deprecation Warnings**
+   ```
+   Deprecation Notice: optional(): Implicitly marking parameter $callback as nullable
+   ```
+   **Solution**: These are Laravel framework warnings and don't affect functionality. They'll be resolved in future Laravel updates.
 
 ## 🔄 CI/CD Integration
 

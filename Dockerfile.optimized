@@ -10,7 +10,9 @@ COPY config/ ./config/
 COPY database/ ./database/
 COPY routes/ ./routes/
 COPY lang/ ./lang/
-RUN composer install --no-dev --prefer-dist --no-progress --no-interaction
+RUN composer install --no-dev --prefer-dist --no-progress --no-interaction --no-scripts
+# Run scripts after all dependencies are installed
+RUN composer run-script post-autoload-dump
 
 # ---- Node build stage (Tailwind/Vite)
 FROM node:20 AS assets
