@@ -2,17 +2,16 @@
 set -e
 
 PORT="${PORT:-10000}"
-echo "[entrypoint] Starting on port ${PORT}"
+echo "[entrypoint] Will listen on port ${PORT}"
 
-# (optional) silence Apache warning if you still use Apache later
+# Make Apache listen on $PORT
+sed -ri "s/^Listen 80/Listen ${PORT}/" /etc/apache2/ports.conf
+sed -ri "s!<VirtualHost \*:80>!<VirtualHost *:${PORT}>!" /etc/apache2/sites-available/000-default.conf
 printf "ServerName localhost\n" > /etc/apache2/conf-available/servername.conf || true
 a2enconf servername >/dev/null 2>&1 || true
 
-# ----- Laravel prep -----
-if [ -z "${APP_KEY:-}" ] || ! grep -q "base64:" <<<"$APP_KEY"; then
-  php artisan key:generate --force || true
-fi
-
+# Laravel prep
+if [ -z "${APP_KEY:-}" ] || ! grep -q "base64:" <<<"$APP_KEY"; then php artisan key:generate --force || true; fi
 php artisan storage:link || true
 php artisan package:discover --ansi || true
 
@@ -23,9 +22,8 @@ php artisan config:cache || true
 php artisan route:cache || true
 php artisan view:cache || true
 
+# (Optional) migrations; you can also move this to Pre-Deploy in Render
 php artisan migrate --force || true
 
-# ----- Start HTTP server bound to $PORT -----
-# Use PHP built-in server (keeps container in foreground)
-echo "[entrypoint] php -S 0.0.0.0:${PORT} -t public public/index.php"
-exec php -S 0.0.0.0:${PORT} -t public public/index.php
+echo "[entrypoint] starting apache2-foreground on :${PORT}"
+exec apache2-foreground
