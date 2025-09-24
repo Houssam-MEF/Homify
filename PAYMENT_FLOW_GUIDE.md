@@ -170,3 +170,4 @@ Le système de checkout est maintenant **fonctionnel** ! L'erreur est corrigée 
 
 
 
+
