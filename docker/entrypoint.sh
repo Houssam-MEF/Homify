@@ -31,5 +31,5 @@ php artisan migrate --force || true
 
 # health route handled in routes/web.php
 
-# --- start Apache in foreground ---
-apache2-foreground
+# --- start Laravel built-in server bound to $PORT (Render injects this) ---
+php -S 0.0.0.0:${PORT:-8080} -t public public/index.php
